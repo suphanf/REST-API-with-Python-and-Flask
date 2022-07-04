@@ -1,0 +1,516 @@
+openapi: "3.0.1"
+info:
+  title: "Quiz Builder API"
+  version: "2022-07-04T00:52:46Z"
+servers:
+- url: "https://03lqapmb89.execute-api.ap-southeast-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "/v1"
+paths:
+  /users/{id}/confirm:
+    post:
+      description: "Confirm the ownership of an email"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserConfirmation"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserID"
+  /quizzes/{id}/publish:
+    post:
+      description: "Publish a quiz"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizID"
+      security:
+      - Cognito: []
+  /users/signup:
+    post:
+      description: "Sign up a new user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignUp"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserID"
+  /quizzes/{id}/submissions:
+    get:
+      description: "List all submissions from a quiz"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionList"
+      security:
+      - Cognito: []
+    post:
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserAnswers"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionID"
+      security:
+      - Cognito: []
+  /quizzes/{id}/questions:
+    post:
+      description: "Create a question in an unpublished quiz"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Question"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionID"
+      security:
+      - Cognito: []
+  /submissions:
+    get:
+      description: "List all submissions taken by a user"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionList"
+      security:
+      - Cognito: []
+  /users/auth:
+    post:
+      description: "Authenticate a user using either a combination of username/password\
+        \ or a refresh token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserAuthentication"
+        required: true
+      responses:
+        "200":
+          description: "An id token is used in http header when sending a request.\
+            \ A refresh token is used to get a new id token."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAuthToken"
+  /submissions/{id}:
+    get:
+      description: "Get a submission's answers"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+      security:
+      - Cognito: []
+  /quizzes:
+    get:
+      description: "Get all quizzes created by a user"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizList"
+      security:
+      - Cognito: []
+    post:
+      description: "Create a quiz"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizTitle"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizID"
+      security:
+      - Cognito: []
+  /quizzes/{id}/questions/{qid}:
+    put:
+      description: "Update a question in an unpublished quiz"
+      parameters:
+      - name: "qid"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Question"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionID"
+      security:
+      - Cognito: []
+    delete:
+      description: "Delete a question in an unpublished quiz"
+      parameters:
+      - name: "qid"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionID"
+      security:
+      - Cognito: []
+  /quizzes/{id}:
+    get:
+      description: "Get a quiz's questions and answers"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"
+      security:
+      - Cognito: []
+    put:
+      description: "Update the quiz's title"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizTitle"
+        required: true
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizID"
+      security:
+      - Cognito: []
+    delete:
+      description: "Disable a quiz if it is published; Delete a quiz it is unpublished"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizID"
+      security:
+      - Cognito: []
+components:
+  schemas:
+    UserConfirmation:
+      title: "User Confirmation"
+      required:
+      - "confirmation_code"
+      type: "object"
+      properties:
+        confirmation_code:
+          type: "string"
+    UserAnswers:
+      title: "User Answers"
+      type: "array"
+      items:
+        type: "array"
+        items:
+          type: "number"
+    UserAuthToken:
+      title: "User Auth Token"
+      type: "object"
+      properties:
+        user_id:
+          type: "string"
+        id_token:
+          type: "string"
+        refresh_token:
+          type: "string"
+    Submission:
+      title: "Submission"
+      type: "object"
+      properties:
+        title:
+          type: "string"
+        username:
+          type: "string"
+          format: "email"
+        timestamp:
+          type: "string"
+          format: "date-time"
+        total_score:
+          type: "number"
+        user_answers:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              text:
+                type: "string"
+              chosen:
+                type: "array"
+                items:
+                  type: "string"
+              score:
+                type: "number"
+    QuizID:
+      title: "Quiz ID"
+      type: "object"
+      properties:
+        quiz_id:
+          type: "string"
+    UserAuthentication:
+      title: "User Authentication"
+      required:
+      - "auth_type"
+      type: "object"
+      properties:
+        auth_type:
+          type: "string"
+          enum:
+          - "REFRESH_TOKEN"
+          - "USER_PASSWORD_AUTH"
+        username:
+          type: "string"
+          format: "email"
+        password:
+          type: "string"
+        refresh_token:
+          type: "string"
+    SubmissionList:
+      title: "Submission List"
+      type: "array"
+      items:
+        type: "object"
+        properties:
+          submission_id:
+            type: "string"
+          title:
+            type: "string"
+          username:
+            type: "string"
+            format: "email"
+          timestamp:
+            type: "string"
+            format: "date-time"
+          total_score:
+            type: "number"
+    Quiz:
+      title: "Quiz"
+      type: "object"
+      properties:
+        title:
+          type: "string"
+        timestamp:
+          type: "string"
+          format: "date-time"
+        questions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              question_id:
+                type: "string"
+              text:
+                type: "string"
+              is_multiple:
+                type: "boolean"
+              choices:
+                type: "array"
+                items:
+                  type: "string"
+              answers:
+                type: "array"
+                items:
+                  type: "number"
+        is_published:
+          type: "boolean"
+    QuizList:
+      title: "Quiz List"
+      type: "array"
+      items:
+        type: "object"
+        properties:
+          quiz_id:
+            type: "string"
+          title:
+            type: "string"
+          timestamp:
+            type: "string"
+            format: "date-time"
+          is_published:
+            type: "boolean"
+    UserSignUp:
+      title: "User Sign-Up"
+      required:
+      - "password"
+      - "username"
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          format: "email"
+        password:
+          type: "string"
+    QuestionID:
+      title: "Question ID"
+      type: "object"
+      properties:
+        question_id:
+          type: "string"
+    UserID:
+      title: "User ID"
+      type: "object"
+      properties:
+        user_id:
+          type: "string"
+    Question:
+      title: "Question"
+      required:
+      - "answers"
+      - "choices"
+      - "is_multiple"
+      - "text"
+      type: "object"
+      properties:
+        text:
+          type: "string"
+        is_multiple:
+          type: "boolean"
+        choices:
+          type: "array"
+          items:
+            type: "string"
+        answers:
+          type: "array"
+          items:
+            type: "number"
+    QuizTitle:
+      title: "Quiz Title"
+      required:
+      - "title"
+      type: "object"
+      properties:
+        title:
+          type: "string"
+  securitySchemes:
+    Cognito:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      x-amazon-apigateway-authtype: "cognito_user_pools"
