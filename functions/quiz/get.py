@@ -37,7 +37,7 @@ def lambda_handler(event, context):
             "choices": list(map(lambda x: x["S"], result["choices"]["L"]))
         }
         if this_user_id == quiz["user_id"]["S"]:
-            question["answers"] = list(map(int, result["answers"]["NS"]))
+            question["answers"] = sorted(list(map(int, result["answers"]["NS"])))
         questions.append(question)
 
     return {

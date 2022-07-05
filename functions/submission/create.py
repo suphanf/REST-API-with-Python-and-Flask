@@ -24,6 +24,22 @@ def lambda_handler(event, context):
     if error_out is not None:
         return error_out
 
+    results = db.query(TableName="Submission",
+        IndexName="user_id-quiz_id-index",
+        KeyConditionExpression="user_id = :user_id AND quiz_id = :quiz_id",
+        ExpressionAttributeValues={
+            ":user_id": { "S": auth.get_user_id(event) },
+            ":quiz_id": { "S": quiz_id }
+        }
+    )
+    if len(results["Items"]) > 0:
+        return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "message": "The quiz has already been taken by this user."
+            })
+        }
+
     body = json.loads(event["body"])
     if len(body) != len(quiz["questions"]["L"]):
         return {
