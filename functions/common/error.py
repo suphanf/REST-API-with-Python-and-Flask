@@ -68,3 +68,12 @@ def answer_not_valid(choices, answers, is_multiple):
                     "message": "An answer is not a valid integer [0 .. N(choices)-1]"
                 })
             }
+
+def submission_creator(event, quiz):
+    if auth.get_user_id(event) == quiz["user_id"]["S"]:
+        return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "message": "A user cannot take his/her own quiz."
+            })
+        }
