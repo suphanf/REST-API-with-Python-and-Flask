@@ -1,19 +1,6 @@
 import json
 import common.auth as auth
 
-def quiz_id_missing(event):
-    if event.get("pathParameters") is not None:
-        if event["pathParameters"].get("id") is not None:
-            return None
-
-    return {
-        "statusCode": 400,
-        "body": json.dumps({
-            "message": "Quiz ID is missing."
-        })
-    }
-
-
 def quiz_not_found(db, quiz_id):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
@@ -36,19 +23,12 @@ def quiz_not_creator(event, quiz):
             })
         }
 
-
-def quiz_title_missing(event):
-    if event.get("body") is not None:
-        try:
-            body = json.loads(event["body"])
-        except json.decoder.JSONDecodeError:
-            body = {}
-        if len(body.get("title", "")) > 0:
-            return None
-
-    return {
-        "statusCode": 400,
-        "body": json.dumps({
-            "message": "Title is missing or empty."
-        })
-    }
+def quiz_title_empty(event):
+    body = json.loads(event["body"])
+    if len(body["title"]) < 1:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "Quiz's title is empty."
+            })
+        }

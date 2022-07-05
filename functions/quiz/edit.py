@@ -5,7 +5,7 @@ import common.error as error
 db = boto3.client("dynamodb")
 
 def lambda_handler(event, context):
-    error_out = error.quiz_id_missing(event)
+    error_out = error.quiz_title_empty(event)
     if error_out is not None:
         return error_out
 
@@ -18,10 +18,6 @@ def lambda_handler(event, context):
         "quiz_id": { "S": quiz_id }
     }).get("Item")
     error_out = error.quiz_not_creator(event, quiz)
-    if error_out is not None:
-        return error_out
-
-    error_out = error.quiz_title_missing(event)
     if error_out is not None:
         return error_out
 
