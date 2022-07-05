@@ -31,7 +31,7 @@ def lambda_handler(event, context):
     for choice in body["choices"]:
         choices.append({ "S": choice })
 
-    error_out = error.answer_not_valid(choices, body["answers"])
+    error_out = error.answer_not_valid(choices, body["answers"], body["is_multiple"])
     if error_out is not None:
         return error_out
 

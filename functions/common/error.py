@@ -52,7 +52,14 @@ def question_not_found(db, question_id):
             })
         }
 
-def answer_not_valid(choices, answers):
+def answer_not_valid(choices, answers, is_multiple):
+    if not is_multiple and len(answers) > 1:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "A single-answer question must have one answer."
+            })
+        }
     for ans in answers:
         if not isinstance(ans, int) or ans < 0 or ans >= len(choices):
             return {
