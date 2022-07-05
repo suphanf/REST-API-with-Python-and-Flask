@@ -27,6 +27,10 @@ def lambda_handler(event, context):
         db.delete_item(TableName="Quiz", Key={
             "quiz_id": { "S": quiz_id }
         })
+        for question_id in map(lambda x: x["S"], quiz["questions"]["L"]):
+            db.delete_item(TableName="Question", Key={
+                "question_id": { "S": question_id }
+            })
 
     return {
         "statusCode": 200,
