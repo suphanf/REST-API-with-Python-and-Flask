@@ -23,6 +23,15 @@ def quiz_not_creator(event, quiz):
             })
         }
 
+def quiz_not_editable(quiz):
+    if quiz["is_published"]["BOOL"]:
+        return {
+            "statusCode": 422,
+            "body": json.dumps({
+                "message": "The quiz cannot be edited because it is published."
+            })
+        }
+
 def question_not_found(db, question_id):
     question = db.get_item(TableName="Question", Key={
         "question_id": { "S": question_id }

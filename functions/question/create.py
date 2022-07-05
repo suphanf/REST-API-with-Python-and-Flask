@@ -18,6 +18,10 @@ def lambda_handler(event, context):
     if error_out is not None:
         return error_out
 
+    error_out = error.quiz_not_editable(quiz)
+    if error_out is not None:
+        return error_out
+
     body = json.loads(event["body"])
     question_id = str(uuid.uuid4())
     choices = []

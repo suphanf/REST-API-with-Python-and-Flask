@@ -17,6 +17,10 @@ def lambda_handler(event, context):
     if error_out is not None:
         return error_out
 
+    error_out = error.quiz_not_editable(quiz)
+    if error_out is not None:
+        return error_out
+
     body = json.loads(event["body"])
     db.update_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }

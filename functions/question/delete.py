@@ -17,6 +17,10 @@ def lambda_handler(event, context):
     if error_out is not None:
         return error_out
 
+    error_out = error.quiz_not_editable(quiz)
+    if error_out is not None:
+        return error_out
+
     question_id = event["pathParameters"]["qid"]
     error_out = error.question_not_found(db, question_id)
     if error_out is not None:
