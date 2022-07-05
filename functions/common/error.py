@@ -32,3 +32,25 @@ def quiz_title_empty(event):
                 "message": "Quiz's title is empty."
             })
         }
+
+def question_not_found(db, question_id):
+    question = db.get_item(TableName="Question", Key={
+        "question_id": { "S": question_id }
+    }).get("Item")
+    if question is None:
+        return {
+            "statusCode": 404,
+            "body": json.dumps({
+                "message": "The question does not exist."
+            })
+        }
+
+def answer_not_valid(choices, answers):
+    for ans in answers:
+        if not isinstance(ans, int) or ans < 0 or ans >= len(choices):
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "message": "An answer is not a valid integer [0 .. N(choices)-1]"
+                })
+            }
