@@ -15,6 +15,10 @@ def lambda_handler(event, context):
         "quiz_id": { "S": quiz_id }
     }).get("Item")
 
+    error_out = error.quiz_not_published(event, quiz)
+    if error_out is not None:
+        return error_out
+
     results = db.query(TableName="Question",
         IndexName="quiz_id-index",
         KeyConditionExpression="quiz_id = :quiz_id",

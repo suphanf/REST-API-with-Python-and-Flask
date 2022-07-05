@@ -13,6 +13,14 @@ def quiz_not_found(db, quiz_id):
             })
         }
 
+def quiz_not_published(event, quiz):
+    if auth.get_user_id(event) != quiz["user_id"]["S"] and not quiz["is_published"]["BOOL"]:
+         return {
+            "statusCode": 404,
+            "body": json.dumps({
+                "message": "The quiz does not exist."
+            })
+        }
 
 def quiz_not_creator(event, quiz):
     if auth.get_user_id(event) != quiz["user_id"]["S"]:
