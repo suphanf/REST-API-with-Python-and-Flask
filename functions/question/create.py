@@ -37,7 +37,7 @@ def lambda_handler(event, context):
         "question_id": { "S": question_id },
         "quiz_id": { "S": quiz_id },
         "text": { "S": body["text"] },
-        "is_mutiple": { "BOOL": body["is_multiple"] },
+        "is_multiple": { "BOOL": body["is_multiple"] },
         "choices": { "L": choices },
         "answers": { "NS": answers }
     })
