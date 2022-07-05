@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 import uuid
 import common.error as error
 
@@ -21,6 +22,14 @@ def lambda_handler(event, context):
     error_out = error.quiz_not_editable(quiz)
     if error_out is not None:
         return error_out
+
+    if len(quiz["questions"]["L"]) >= int(os.environ["MAX_QUESTIONS"]):
+        return {
+            "statusCode": 422,
+            "body": json.dumps({
+                "message": "Max number of questions has been reached for this quiz."
+            })
+        }
 
     body = json.loads(event["body"])
     question_id = str(uuid.uuid4())
