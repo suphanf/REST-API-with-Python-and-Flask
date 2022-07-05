@@ -5,10 +5,6 @@ import common.error as error
 db = boto3.client("dynamodb")
 
 def lambda_handler(event, context):
-    error_out = error.quiz_title_empty(event)
-    if error_out is not None:
-        return error_out
-
     quiz_id = event["pathParameters"]["id"]
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:

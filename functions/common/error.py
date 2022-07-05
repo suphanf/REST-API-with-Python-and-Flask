@@ -23,16 +23,6 @@ def quiz_not_creator(event, quiz):
             })
         }
 
-def quiz_title_empty(event):
-    body = json.loads(event["body"])
-    if len(body["title"]) < 1:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({
-                "message": "Quiz's title is empty."
-            })
-        }
-
 def question_not_found(db, question_id):
     question = db.get_item(TableName="Question", Key={
         "question_id": { "S": question_id }
