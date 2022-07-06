@@ -49,4 +49,4 @@ app.register_blueprint(user_confirm_file)
 app.register_blueprint(user_signup_file)
 
 if __name__ == "__main__":
-    serve(app, host='0.0.0.0', port=80)
+    serve(app, host="0.0.0.0", port=8080)

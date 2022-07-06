@@ -1,4 +1,4 @@
-API_HOST = "http://18.139.172.1"
+API_HOST = "http://18.139.172.1:8080"
 
 USER01_USERNAME = "toptal_quiz_builder_01@mailinator.com"
 USER01_PASSWORD = "aaa123BBB"
