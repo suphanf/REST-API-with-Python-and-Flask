@@ -2,14 +2,21 @@ import boto3
 import datetime
 import json
 import uuid
-import common.auth as auth
-import common.error as error
-import common.util as util
+import functions.common.auth as auth
+import functions.common.error as error
+import functions.common.util as util
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+submission_create_file = Blueprint("submission_create_file", __name__)
 
-def lambda_handler(event, context):
-    quiz_id = event["pathParameters"]["id"]
+@submission_create_file.route("/quizzes/<quiz_id>/submissions", methods=["POST"])
+def lambda_handler(quiz_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:
         return error_out
@@ -17,11 +24,11 @@ def lambda_handler(event, context):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
     }).get("Item")
-    error_out = error.submission_creator(event, quiz)
+    error_out = error.submission_creator(user_id, quiz)
     if error_out is not None:
         return error_out
 
-    error_out = error.quiz_not_published(event, quiz)
+    error_out = error.quiz_not_published(user_id, quiz)
     if error_out is not None:
         return error_out
 
@@ -29,26 +36,16 @@ def lambda_handler(event, context):
         IndexName="user_id-quiz_id-index",
         KeyConditionExpression="user_id = :user_id AND quiz_id = :quiz_id",
         ExpressionAttributeValues={
-            ":user_id": { "S": auth.get_user_id(event) },
+            ":user_id": { "S": user_id },
             ":quiz_id": { "S": quiz_id }
         }
     )
     if len(results["Items"]) > 0:
-        return {
-            "statusCode": 403,
-            "body": json.dumps({
-                "message": "The quiz has already been taken by this user."
-            })
-        }
+        return { "message": "The quiz has already been taken by this user." }, 403
 
-    body = json.loads(event["body"])
+    body = json.loads(request.data)
     if len(body) != len(quiz["questions"]["L"]):
-        return {
-            "statusCode": 400,
-            "body": json.dumps({
-                "message": "A submission must have answers (or skip) for all questions."
-            })
-        }
+        return { "message": "A submission must have answers (or skip) for all questions." }, 400
 
     question_map = util.get_question_map(db, quiz_id)
     questions = []
@@ -89,15 +86,10 @@ def lambda_handler(event, context):
         "submission_id": { "S": submission_id },
         "quiz_id": { "S": quiz_id },
         "quiz_title": quiz["title"],
-        "user_id": { "S": auth.get_user_id(event) },
+        "user_id": { "S": user_id },
         "timestamp": { "S": dt_str },
         "total_score": { "N": "{:.2f}".format(total_score) },
         "user_answers": { "L": user_answers }
     })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "submission_id": submission_id
-        })
-    }
+    return { "submission_id": submission_id }, 200

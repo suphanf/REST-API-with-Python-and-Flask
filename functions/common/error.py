@@ -68,28 +68,12 @@ def submission_not_found(db, submission_id):
         "submission_id": { "S": submission_id }
     }).get("Item")
     if submission is None:
-        return {
-            "statusCode": 404,
-            "body": json.dumps({
-                "message": "The submission does not exist."
-            })
-        }
+        return { "message": "The submission does not exist." }, 404
 
-def submission_unauthorized(event, submission, quiz):
-    user_id = auth.get_user_id(event)
+def submission_unauthorized(user_id, submission, quiz):
     if user_id != submission["user_id"]["S"] and user_id != quiz["user_id"]["S"]:
-        return {
-            "statusCode": 403,
-            "body": json.dumps({
-                "message": "The user does not have permission to view this submission."
-            })
-        }
+        return { "message": "The user does not have permission to view this submission." }, 403
 
-def submission_creator(event, quiz):
-    if auth.get_user_id(event) == quiz["user_id"]["S"]:
-        return {
-            "statusCode": 403,
-            "body": json.dumps({
-                "message": "A user cannot take his/her own quiz."
-            })
-        }
+def submission_creator(user_id, quiz):
+    if user_id == quiz["user_id"]["S"]:
+        return { "message": "A user cannot take his/her own quiz." }, 403

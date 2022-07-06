@@ -19,6 +19,10 @@ from functions.question.create import question_create_file
 from functions.question.delete import question_delete_file
 from functions.question.edit import question_edit_file
 
+from functions.submission.create import submission_create_file
+from functions.submission.get import submission_get_file
+from functions.submission.list import submission_list_file
+
 from functions.user.auth import user_auth_file
 
 app = Flask(__name__)
@@ -32,6 +36,10 @@ app.register_blueprint(quiz_publish_file)
 app.register_blueprint(question_create_file)
 app.register_blueprint(question_delete_file)
 app.register_blueprint(question_edit_file)
+
+app.register_blueprint(submission_create_file)
+app.register_blueprint(submission_get_file)
+app.register_blueprint(submission_list_file)
 
 app.register_blueprint(user_auth_file)
 

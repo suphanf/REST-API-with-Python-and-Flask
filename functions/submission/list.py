@@ -1,18 +1,19 @@
 import boto3
 import json
-import common.auth as auth
-import common.error as error
+import functions.common.auth as auth
+import functions.common.error as error
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+submission_list_file = Blueprint("submission_list_file", __name__)
 
-def lambda_handler(event, context):
-    if event["pathParameters"] is not None and "id" in event["pathParameters"]:
-        return list_by_quiz_id(event, context)
-    else:
-        return list_by_user_id(event, context)
+@submission_list_file.route("/quizzes/<quiz_id>/submissions", methods=["GET"])
+def list_by_quiz_id(quiz_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
 
-def list_by_quiz_id(event, context):
-    quiz_id = event["pathParameters"]["id"]
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:
         return error_out
@@ -20,7 +21,7 @@ def list_by_quiz_id(event, context):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
     }).get("Item")
-    error_out = error.quiz_not_creator(event, quiz)
+    error_out = error.quiz_not_creator(user_id, quiz)
     if error_out is not None:
         return error_out
 
@@ -41,17 +42,19 @@ def list_by_quiz_id(event, context):
             "timestamp": result["timestamp"]["S"],
             "total_score": result["total_score"]["N"]
         })
-    return {
-        "statusCode": 200,
-        "body": json.dumps(submissions)
-    }
+    return json.dumps(submissions), 200
 
-def list_by_user_id(event, context):
+@submission_list_file.route("/submissions", methods=["GET"])
+def list_by_user_id():
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     results = db.query(TableName="Submission",
         IndexName="user_id-quiz_id-index",
         KeyConditionExpression="user_id = :user_id",
         ExpressionAttributeValues={
-            ":user_id": { "S": auth.get_user_id(event) }
+            ":user_id": { "S": user_id }
         }
     )
 
@@ -65,7 +68,4 @@ def list_by_user_id(event, context):
             "total_score": result["total_score"]["N"]
         })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(submissions)
-    }
+    return json.dumps(submissions), 200

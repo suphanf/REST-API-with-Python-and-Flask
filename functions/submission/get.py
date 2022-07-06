@@ -1,12 +1,19 @@
 import boto3
-import json
-import common.error as error
-import common.util as util
+import functions.common.auth as auth
+import functions.common.error as error
+import functions.common.util as util
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+submission_get_file = Blueprint("submission_get_file", __name__)
 
-def lambda_handler(event, context):
-    submission_id = event["pathParameters"]["id"]
+@submission_get_file.route("/submissions/<submission_id>", methods=["GET"])
+def lambda_handler(submission_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     error_out = error.submission_not_found(db, submission_id)
     if error_out is not None:
         return error_out
@@ -19,7 +26,7 @@ def lambda_handler(event, context):
         "quiz_id": submission["quiz_id"]
     }).get("Item")
 
-    error_out = error.submission_unauthorized(event, submission, quiz)
+    error_out = error.submission_unauthorized(user_id, submission, quiz)
     if error_out is not None:
         return error_out
 
@@ -39,12 +46,9 @@ def lambda_handler(event, context):
         })
 
     return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "quiz_title": submission["quiz_title"]["S"],
-            "user_id": submission["user_id"]["S"],
-            "timestamp": submission["timestamp"]["S"],
-            "total_score": submission["total_score"]["N"],
-            "user_answers": user_answers
-        })
-    }
+        "quiz_title": submission["quiz_title"]["S"],
+        "user_id": submission["user_id"]["S"],
+        "timestamp": submission["timestamp"]["S"],
+        "total_score": submission["total_score"]["N"],
+        "user_answers": user_answers
+    }, 200
