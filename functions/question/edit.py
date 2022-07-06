@@ -33,6 +33,10 @@ def lambda_handler(quiz_id, question_id):
     if error_out is not None:
         return error_out
 
+    error_out = error.question_invalid(request.data)
+    if error_out is not None:
+        return error_out
+
     body = json.loads(request.data)
     choices = []
     for choice in body["choices"]:

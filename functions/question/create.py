@@ -36,6 +36,10 @@ def lambda_handler(quiz_id):
             "message": "Max number of questions has been reached for this quiz."
         }, 422
 
+    error_out = error.question_invalid(request.data)
+    if error_out is not None:
+        return error_out
+
     body = json.loads(request.data)
     question_id = str(uuid.uuid4())
     choices = []

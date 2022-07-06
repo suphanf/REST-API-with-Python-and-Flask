@@ -2,6 +2,10 @@ import os
 
 os.environ["CLIENT_ID"] = "2bstaanlqnifan365lh6h3e96t"
 os.environ["MAX_QUESTIONS"] = "10"
+os.environ["MIN_CHOICES"] = "2"
+os.environ["MAX_CHOICES"] = "5"
+os.environ["MIN_ANSWERS"] = "1"
+os.environ["MAX_ANSWERS"] = "5"
 
 from flask import Flask
 from functions.quiz.create import quiz_create_file

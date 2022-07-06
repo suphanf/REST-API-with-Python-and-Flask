@@ -1,4 +1,5 @@
 import json
+import os
 import functions.common.auth as auth
 
 def title_empty(data):
@@ -35,22 +36,32 @@ def question_not_found(db, question_id):
     if question is None:
         return { "message": "The question does not exist." }, 404
 
+def question_invalid(data):
+    try:
+        body = json.loads(data)
+    except ValueError:
+        body = {}
+    text = body.get("text", "")
+    is_multiple = body.get("is_multiple")
+    choices = body.get("choices", [])
+    answers = body.get("answers", [])
+    if len(body.get("text", "")) == 0 or not isinstance(body.get("is_multiple"), bool) or \
+        len(choices) < int(os.environ["MIN_CHOICES"]) or \
+        len(choices) > int(os.environ["MAX_CHOICES"]) or \
+        len(answers) < int(os.environ["MIN_ANSWERS"]) or \
+        len(answers) > int(os.environ["MAX_ANSWERS"]):
+        return { "message": "Question format is invalid" }, 400
+
 def answer_not_valid(choices, answers, is_multiple):
     if not is_multiple and len(answers) > 1:
         return {
-            "statusCode": 400,
-            "body": json.dumps({
-                "message": "A single-answer question must have one answer."
-            })
-        }
+             "message": "A single-answer question must have one answer."
+        }, 400
     for ans in answers:
         if not isinstance(ans, int) or ans < 0 or ans >= len(choices):
             return {
-                "statusCode": 400,
-                "body": json.dumps({
-                    "message": "An answer is not a valid integer [0 .. N(choices)-1]"
-                })
-            }
+                "message": "An answer is not a valid integer [0 .. N(choices)-1]"
+            }, 400
 
 def submission_not_found(db, submission_id):
     submission = db.get_item(TableName="Submission", Key={
