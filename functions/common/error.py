@@ -69,6 +69,28 @@ def answer_not_valid(choices, answers, is_multiple):
                 })
             }
 
+def submission_not_found(db, submission_id):
+    submission = db.get_item(TableName="Submission", Key={
+        "submission_id": { "S": submission_id }
+    }).get("Item")
+    if submission is None:
+        return {
+            "statusCode": 404,
+            "body": json.dumps({
+                "message": "The submission does not exist."
+            })
+        }
+
+def submission_unauthorized(event, submission, quiz):
+    user_id = auth.get_user_id(event)
+    if user_id != submission["user_id"]["S"] and user_id != quiz["user_id"]["S"]:
+        return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "message": "The user does not have permission to view this submission."
+            })
+        }
+
 def submission_creator(event, quiz):
     if auth.get_user_id(event) == quiz["user_id"]["S"]:
         return {
