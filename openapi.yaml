@@ -1,7 +1,7 @@
 openapi: "3.0.1"
 info:
   title: "Quiz Builder API"
-  version: "2022-07-04T00:52:46Z"
+  version: "2022-07-06T14:18:33Z"
 servers:
 - url: "https://03lqapmb89.execute-api.ap-southeast-1.amazonaws.com/{basePath}"
   variables:
@@ -22,6 +22,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UserConfirmation"
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/UserConfirmation"
         required: true
       responses:
         "200":
@@ -29,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserID"
+                $ref: "#/components/schemas/Empty"
   /quizzes/{id}/publish:
     post:
       description: "Publish a quiz"
@@ -54,6 +57,9 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignUp"
+          text/plain:
             schema:
               $ref: "#/components/schemas/UserSignUp"
         required: true
@@ -94,6 +100,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UserAnswers"
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/UserAnswers"
         required: true
       responses:
         "200":
@@ -116,6 +125,9 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/Question"
+          text/plain:
             schema:
               $ref: "#/components/schemas/Question"
         required: true
@@ -147,6 +159,9 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/UserAuthentication"
+          text/plain:
             schema:
               $ref: "#/components/schemas/UserAuthentication"
         required: true
@@ -195,6 +210,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/QuizTitle"
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/QuizTitle"
         required: true
       responses:
         "200":
@@ -222,6 +240,9 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/Question"
+          text/plain:
             schema:
               $ref: "#/components/schemas/Question"
         required: true
@@ -287,6 +308,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/QuizTitle"
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/QuizTitle"
         required: true
       responses:
         "200":
@@ -320,12 +344,17 @@ components:
       title: "User Confirmation"
       required:
       - "confirmation_code"
+      - "username"
       type: "object"
       properties:
+        username:
+          type: "string"
+          format: "email"
         confirmation_code:
           type: "string"
     UserAnswers:
       title: "User Answers"
+      minItems: 1
       type: "array"
       items:
         type: "array"
@@ -335,8 +364,6 @@ components:
       title: "User Auth Token"
       type: "object"
       properties:
-        user_id:
-          type: "string"
         id_token:
           type: "string"
         refresh_token:
@@ -345,11 +372,10 @@ components:
       title: "Submission"
       type: "object"
       properties:
-        title:
+        quiz_title:
           type: "string"
-        username:
+        user_id:
           type: "string"
-          format: "email"
         timestamp:
           type: "string"
           format: "date-time"
@@ -360,7 +386,7 @@ components:
           items:
             type: "object"
             properties:
-              text:
+              question_text:
                 type: "string"
               chosen:
                 type: "array"
@@ -400,16 +426,18 @@ components:
         properties:
           submission_id:
             type: "string"
-          title:
+          quiz_title:
             type: "string"
-          username:
+          user_id:
             type: "string"
-            format: "email"
           timestamp:
             type: "string"
             format: "date-time"
           total_score:
             type: "number"
+    Empty:
+      title: "Empty Schema"
+      type: "object"
     Quiz:
       title: "Quiz"
       type: "object"
@@ -489,14 +517,20 @@ components:
       type: "object"
       properties:
         text:
+          minLength: 1
           type: "string"
         is_multiple:
           type: "boolean"
         choices:
+          maxItems: 5
+          minItems: 2
           type: "array"
           items:
+            minLength: 1
             type: "string"
         answers:
+          maxItems: 5
+          minItems: 1
           type: "array"
           items:
             type: "number"
@@ -507,6 +541,7 @@ components:
       type: "object"
       properties:
         title:
+          minLength: 1
           type: "string"
   securitySchemes:
     Cognito:
