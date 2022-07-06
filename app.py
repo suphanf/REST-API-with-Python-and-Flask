@@ -24,6 +24,8 @@ from functions.submission.get import submission_get_file
 from functions.submission.list import submission_list_file
 
 from functions.user.auth import user_auth_file
+from functions.user.confirm import user_confirm_file
+from functions.user.signup import user_signup_file
 
 app = Flask(__name__)
 app.register_blueprint(quiz_create_file)
@@ -42,6 +44,8 @@ app.register_blueprint(submission_get_file)
 app.register_blueprint(submission_list_file)
 
 app.register_blueprint(user_auth_file)
+app.register_blueprint(user_confirm_file)
+app.register_blueprint(user_signup_file)
 
 if __name__ == "__main__":
     app.run()

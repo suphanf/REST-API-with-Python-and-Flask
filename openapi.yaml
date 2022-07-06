@@ -1,41 +1,13 @@
 openapi: "3.0.1"
 info:
   title: "Quiz Builder API"
-  version: "2022-07-06T14:45:33Z"
+  version: "2022-07-06T19:13:45Z"
 servers:
 - url: "https://03lqapmb89.execute-api.ap-southeast-1.amazonaws.com/{basePath}"
   variables:
     basePath:
       default: "/v1"
 paths:
-  /users/{id}/confirm:
-    post:
-      description: "Confirm the ownership of an email"
-      parameters:
-      - name: "id"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserConfirmation"
-          text/plain:
-            schema:
-              $ref: "#/components/schemas/UserConfirmation"
-        required: true
-      responses:
-        "400":
-          description: "Invalid request body"
-          content: {}
-        "200":
-          description: "200 response"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Empty"
   /quizzes/{id}/publish:
     post:
       description: "Publish a quiz"
@@ -194,6 +166,27 @@ paths:
           content: {}
       security:
       - Cognito: []
+  /users/confirm:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserConfirmation"
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/UserConfirmation"
+        required: true
+      responses:
+        "400":
+          description: "Invalid request body"
+          content: {}
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
   /submissions:
     get:
       description: "List all submissions taken by a user"

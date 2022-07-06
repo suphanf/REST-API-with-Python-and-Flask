@@ -4,7 +4,7 @@ from config import API_HOST
 
 def assert_unauthorized(response):
      assert response.status_code == 401
-     assert json.loads(response.text)["message"] == "Unauthorized"
+     assert json.loads(response.text)["message"] == "Invalid Access Token"
 
 def test_quiz_create():
      assert_unauthorized(requests.post(f"{API_HOST}/quizzes"))
