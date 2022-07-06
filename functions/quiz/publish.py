@@ -1,11 +1,18 @@
 import boto3
-import json
-import common.error as error
+import functions.common.auth as auth
+import functions.common.error as error
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+quiz_publish_file = Blueprint("quiz_publish_file", __name__)
 
-def lambda_handler(event, context):
-    quiz_id = event["pathParameters"]["id"]
+@quiz_publish_file.route("/quizzes/<quiz_id>/publish", methods=["POST"])
+def lambda_handler(quiz_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:
         return error_out
@@ -13,17 +20,14 @@ def lambda_handler(event, context):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
     }).get("Item")
-    error_out = error.quiz_not_creator(event, quiz)
+    error_out = error.quiz_not_creator(user_id, quiz)
     if error_out is not None:
         return error_out
 
     if len(quiz["questions"]["L"]) < 1:
         return {
-            "statusCode": 422,
-            "body": json.dumps({
-                "message": "The quiz cannot be published because there is no question"
-            })
-        }
+            "message": "The quiz cannot be published because there is no question"
+        }, 422
 
     db.update_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
@@ -31,9 +35,4 @@ def lambda_handler(event, context):
         "is_published": { "Value": { "BOOL": True }}
     })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "quiz_id": quiz_id
-        })
-    }
+    return { "quiz_id": quiz_id }, 200

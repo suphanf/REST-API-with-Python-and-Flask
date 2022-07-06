@@ -26,24 +26,14 @@ def quiz_not_creator(user_id, quiz):
 
 def quiz_not_editable(quiz):
     if quiz["is_published"]["BOOL"]:
-        return {
-            "statusCode": 422,
-            "body": json.dumps({
-                "message": "The quiz cannot be edited because it is published."
-            })
-        }
+        return { "message": "The quiz cannot be edited because it is published." }, 422
 
 def question_not_found(db, question_id):
     question = db.get_item(TableName="Question", Key={
         "question_id": { "S": question_id }
     }).get("Item")
     if question is None:
-        return {
-            "statusCode": 404,
-            "body": json.dumps({
-                "message": "The question does not exist."
-            })
-        }
+        return { "message": "The question does not exist." }, 404
 
 def answer_not_valid(choices, answers, is_multiple):
     if not is_multiple and len(answers) > 1:

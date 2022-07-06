@@ -2,12 +2,20 @@ import boto3
 import json
 import os
 import uuid
-import common.error as error
+import functions.common.auth as auth
+import functions.common.error as error
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+question_create_file = Blueprint("question_create_file", __name__)
 
-def lambda_handler(event, context):
-    quiz_id = event["pathParameters"]["id"]
+@question_create_file.route("/quizzes/<quiz_id>/questions", methods=["POST"])
+def lambda_handler(quiz_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:
         return error_out
@@ -15,7 +23,7 @@ def lambda_handler(event, context):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
     }).get("Item")
-    error_out = error.quiz_not_creator(event, quiz)
+    error_out = error.quiz_not_creator(user_id, quiz)
     if error_out is not None:
         return error_out
 
@@ -25,13 +33,10 @@ def lambda_handler(event, context):
 
     if len(quiz["questions"]["L"]) >= int(os.environ["MAX_QUESTIONS"]):
         return {
-            "statusCode": 422,
-            "body": json.dumps({
-                "message": "Max number of questions has been reached for this quiz."
-            })
-        }
+            "message": "Max number of questions has been reached for this quiz."
+        }, 422
 
-    body = json.loads(event["body"])
+    body = json.loads(request.data)
     question_id = str(uuid.uuid4())
     choices = []
     for choice in body["choices"]:
@@ -58,9 +63,4 @@ def lambda_handler(event, context):
         "questions": { "Value": quiz["questions"] }
     })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "question_id": question_id
-        })
-    }
+    return { "question_id": question_id }, 200
