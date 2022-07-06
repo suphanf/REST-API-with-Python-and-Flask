@@ -1,35 +1,28 @@
 import json
-import common.auth as auth
+import functions.common.auth as auth
+
+def title_empty(data):
+    try:
+        body = json.loads(data)
+    except ValueError:
+        body = {}
+    if len(body.get("title", "")) == 0:
+        return { "message": "Quiz's title cannot be empty" }, 400
 
 def quiz_not_found(db, quiz_id):
     quiz = db.get_item(TableName="Quiz", Key={
         "quiz_id": { "S": quiz_id }
     }).get("Item")
     if quiz is None or quiz["is_disabled"]["BOOL"]:
-        return {
-            "statusCode": 404,
-            "body": json.dumps({
-                "message": "The quiz does not exist."
-            })
-        }
+        return { "message": "The quiz does not exist." }, 404
 
-def quiz_not_published(event, quiz):
-    if auth.get_user_id(event) != quiz["user_id"]["S"] and not quiz["is_published"]["BOOL"]:
-         return {
-            "statusCode": 404,
-            "body": json.dumps({
-                "message": "The quiz does not exist."
-            })
-        }
+def quiz_not_published(user_id, quiz):
+    if user_id != quiz["user_id"]["S"] and not quiz["is_published"]["BOOL"]:
+         return { "message": "The quiz does not exist." }, 404
 
-def quiz_not_creator(event, quiz):
-    if auth.get_user_id(event) != quiz["user_id"]["S"]:
-        return {
-            "statusCode": 403,
-            "body": json.dumps({
-                "message": "The quiz does not belong to the user."
-            })
-        }
+def quiz_not_creator(user_id, quiz):
+    if user_id != quiz["user_id"]["S"]:
+        return { "message": "The quiz does not belong to the user." }, 403
 
 def quiz_not_editable(quiz):
     if quiz["is_published"]["BOOL"]:

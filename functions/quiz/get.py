@@ -1,13 +1,19 @@
 import boto3
-import json
-import common.auth as auth
-import common.error as error
-import common.util as util
+import functions.common.auth as auth
+import functions.common.error as error
+import functions.common.util as util
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+quiz_get_file = Blueprint("quiz_get_file", __name__)
 
-def lambda_handler(event, context):
-    quiz_id = event["pathParameters"]["id"]
+@quiz_get_file.route("/quizzes/<quiz_id>", methods=["GET"])
+def lambda_handler(quiz_id):
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     error_out = error.quiz_not_found(db, quiz_id)
     if error_out is not None:
         return error_out
@@ -16,25 +22,21 @@ def lambda_handler(event, context):
         "quiz_id": { "S": quiz_id }
     }).get("Item")
 
-    error_out = error.quiz_not_published(event, quiz)
+    error_out = error.quiz_not_published(user_id, quiz)
     if error_out is not None:
         return error_out
 
     question_map = util.get_question_map(db, quiz_id)
-    this_user_id = auth.get_user_id(event)
     questions = []
     for question_id in map(lambda x: x["S"], quiz["questions"]["L"]):
         question = question_map[question_id]
-        if this_user_id != quiz["user_id"]["S"]:
+        if user_id != quiz["user_id"]["S"]:
             del question["answers"]
         questions.append(question)
 
     return {
-      "statusCode": 200,
-      "body": json.dumps({
-          "title": quiz["title"]["S"],
-          "timestamp": quiz["timestamp"]["S"],
-          "questions": questions,
-          "is_published": quiz["is_published"]["BOOL"]
-      })
-    }
+        "title": quiz["title"]["S"],
+        "timestamp": quiz["timestamp"]["S"],
+        "questions": questions,
+        "is_published": quiz["is_published"]["BOOL"]
+    }, 200

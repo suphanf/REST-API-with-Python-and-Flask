@@ -1,11 +1,15 @@
 import boto3
 import json
 import os
+from flask import Blueprint, request
 
 cognito = boto3.client("cognito-idp")
+db = boto3.client("dynamodb")
+user_auth_file = Blueprint("user_auth_file", __name__)
 
-def lambda_handler(event, context):
-    body = json.loads(event["body"])
+@user_auth_file.route("/users/auth", methods=["POST"])
+def lambda_handler():
+    body = json.loads(request.data)
 
     if body["auth_type"] == "USER_PASSWORD_AUTH":
         response = cognito.initiate_auth(
@@ -17,12 +21,9 @@ def lambda_handler(event, context):
             }
         )
         return {
-            "statusCode": 200,
-            "body": json.dumps({
-                "id_token": response["AuthenticationResult"]["IdToken"],
-                "refresh_token": response["AuthenticationResult"]["RefreshToken"]
-            })
-        }
+            "access_token": response["AuthenticationResult"]["AccessToken"],
+            "refresh_token": response["AuthenticationResult"]["RefreshToken"]
+        }, 200
     elif body["auth_type"] == "REFRESH_TOKEN":
         response = cognito.initiate_auth(
             ClientId=os.environ["CLIENT_ID"],
@@ -32,16 +33,8 @@ def lambda_handler(event, context):
             }
         )
         return {
-            "statusCode": 200,
-            "body": json.dumps({
-                "id_token": response["AuthenticationResult"]["IdToken"],
-                "refresh_token": body["refresh_token"]
-            })
-        }
+            "id_token": response["AuthenticationResult"]["IdToken"],
+            "refresh_token": body["refresh_token"]
+        }, 200
     else:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({
-                "message": "Unknown authentication type"
-            })
-        }
+        return { "message": "Unknown authentication type" }, 400

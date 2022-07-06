@@ -13,5 +13,5 @@ def get_http_auth_header(user_index=0):
     })
 
     return {
-        "Authorization": json.loads(response.text)["id_token"]
+        "Authorization": json.loads(response.text)["access_token"]
     }

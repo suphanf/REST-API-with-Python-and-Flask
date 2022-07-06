@@ -1,18 +1,26 @@
 import boto3
 import json
-import common.auth as auth
+import functions.common.auth as auth
+from flask import Blueprint, request
 
+cognito = boto3.client("cognito-idp")
 db = boto3.client("dynamodb")
+quiz_list_file = Blueprint("quiz_list_file", __name__)
 
-def lambda_handler(event, context):
+@quiz_list_file.route("/quizzes", methods=["GET"])
+def lambda_handler():
+    user_id, error_out = auth.validate_user(request.headers.get("Authorization"))
+    if error_out is not None:
+        return error_out
+
     results = db.query(TableName="Quiz",
         IndexName="user_id-index",
         KeyConditionExpression="user_id = :user_id",
         ExpressionAttributeValues={
-            ":user_id": { "S": auth.get_user_id(event) }
+            ":user_id": { "S": user_id }
         }
     )
-    
+
     quizzes = []
     for result in results["Items"]:
         quizzes.append({
@@ -22,7 +30,4 @@ def lambda_handler(event, context):
             "is_published": result["is_published"]["BOOL"]
         })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(quizzes)
-    }
+    return json.dumps(quizzes), 200
