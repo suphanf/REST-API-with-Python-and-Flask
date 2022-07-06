@@ -98,6 +98,7 @@ def lambda_handler(event, context):
     db.put_item(TableName="Submission", Item={
         "submission_id": { "S": submission_id },
         "quiz_id": { "S": quiz_id },
+        "quiz_title": quiz["title"],
         "user_id": { "S": auth.get_user_id(event) },
         "timestamp": { "S": dt_str },
         "total_score": { "N": "{:.2f}".format(total_score) },

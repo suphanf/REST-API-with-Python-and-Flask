@@ -36,6 +36,8 @@ def list_by_quiz_id(event, context):
     for result in results["Items"]:
         submissions.append({
             "submission_id": result["submission_id"]["S"],
+            "quiz_title": result["quiz_title"]["S"],
+            "user_id": result["user_id"]["S"],
             "timestamp": result["timestamp"]["S"],
             "total_score": result["total_score"]["N"]
         })
@@ -57,6 +59,8 @@ def list_by_user_id(event, context):
     for result in results["Items"]:
         submissions.append({
             "submission_id": result["submission_id"]["S"],
+            "quiz_title": result["quiz_title"]["S"],
+            "user_id": result["user_id"]["S"],
             "timestamp": result["timestamp"]["S"],
             "total_score": result["total_score"]["N"]
         })
