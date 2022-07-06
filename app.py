@@ -1,4 +1,5 @@
 import os
+from waitress import serve
 
 os.environ["CLIENT_ID"] = "2bstaanlqnifan365lh6h3e96t"
 os.environ["MAX_QUESTIONS"] = "10"
@@ -48,4 +49,4 @@ app.register_blueprint(user_confirm_file)
 app.register_blueprint(user_signup_file)
 
 if __name__ == "__main__":
-    app.run()
+    serve(app, host='0.0.0.0', port=80)
