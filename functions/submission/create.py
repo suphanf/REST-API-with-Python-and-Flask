@@ -4,6 +4,7 @@ import json
 import uuid
 import common.auth as auth
 import common.error as error
+import common.util as util
 
 db = boto3.client("dynamodb")
 
@@ -49,22 +50,10 @@ def lambda_handler(event, context):
             })
         }
 
-    results = db.query(TableName="Question",
-        IndexName="quiz_id-index",
-        KeyConditionExpression="quiz_id = :quiz_id",
-        ExpressionAttributeValues={
-            ":quiz_id": { "S": quiz_id }
-        }
-    )
-
+    question_map = util.get_question_map(db, quiz_id)
     questions = []
-    for result in results["Items"]:
-        question = {
-            "is_multiple": result["is_multiple"]["BOOL"],
-            "choices": list(map(lambda x: x["S"], result["choices"]["L"])),
-            "answers": set(map(int, result["answers"]["NS"]))
-        }
-        questions.append(question)
+    for question_id in map(lambda x: x["S"], quiz["questions"]["L"]):
+        questions.append(question_map[question_id])
 
     total_score = 0
     user_answers = []

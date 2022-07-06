@@ -1,6 +1,7 @@
 import boto3
 import json
 import common.error as error
+import common.util as util
 
 db = boto3.client("dynamodb")
 
@@ -22,19 +23,10 @@ def lambda_handler(event, context):
     if error_out is not None:
         return error_out
 
-    results = db.query(TableName="Question",
-        IndexName="quiz_id-index",
-        KeyConditionExpression="quiz_id = :quiz_id",
-        ExpressionAttributeValues={
-            ":quiz_id": submission["quiz_id"]
-        }
-    )
+    question_map = util.get_question_map(db, submission["quiz_id"]["S"])
     questions = []
-    for result in results["Items"]:
-        questions.append({
-            "text": result["text"]["S"],
-            "choices": list(map(lambda x: x["S"], result["choices"]["L"]))
-        })
+    for question_id in map(lambda x: x["S"], quiz["questions"]["L"]):
+        questions.append(question_map[question_id])
 
     user_answers = []
     for question, u_answer in zip(questions, submission["user_answers"]["L"]):
