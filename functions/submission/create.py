@@ -69,11 +69,12 @@ def lambda_handler(event, context):
         if error_out is not None:
             return error_out
         
+        score = 0
         for ans in answers:
             if ans in question["answers"]:
-                score = 1 / len(question["answers"])
+                score += 1 / len(question["answers"])
             else:
-                score = -1 / (len(question["choices"]) - len(question["answers"]))
+                score -= 1 / (len(question["choices"]) - len(question["answers"]))
         total_score += score
         user_answers.append({
             "M": {
