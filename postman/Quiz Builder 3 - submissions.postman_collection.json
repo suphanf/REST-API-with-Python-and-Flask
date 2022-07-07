@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "e0a712e3-ae2f-4ea0-a176-ff7479fffe18",
+		"name": "Quiz Builder 3 - submissions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21840023"
+	},
+	"item": [
+		{
+			"name": "Take a quiz (user 1)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[0], [0, 1]]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Take a quiz (user 2)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_2}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[0], [0, 1]]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1st invalid submission (user 3)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_3}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[0, 1], []]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2nd invalid submission (user 3)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_3}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[], [5]]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Take a quiz (user 3)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_3}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[], [2, 4]]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List submissions by quiz (user 1)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List submissions by quiz (user 2)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/quizzes/{{QUIZ_ID}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"quizzes",
+						"{{QUIZ_ID}}",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List submissions by user (user 2)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/submissions",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get submission detail (user 1)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/submissions/{{SUBMISSION_ID}}",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"submissions",
+						"{{SUBMISSION_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get submission detail (user 2)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/submissions/{{SUBMISSION_ID}}",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"submissions",
+						"{{SUBMISSION_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get submission detail (user 3)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ACCESS_KEY_3}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/submissions/{{SUBMISSION_ID}}",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"submissions",
+						"{{SUBMISSION_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

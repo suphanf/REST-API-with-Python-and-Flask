@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "ab1b2f14-c2b9-4aea-b673-61a45e132647",
+		"name": "Quiz Builder 1 - users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21840023"
+	},
+	"item": [
+		{
+			"name": "Sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"@mailinator.com\",\r\n    \"password\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/users/signup",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"users",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"\",\r\n    \"confirmation_code\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/users/confirm",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"users",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in (user 1)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"auth_type\": \"USER_PASSWORD_AUTH\",\r\n    \"username\": \"toptal_quiz_builder_01@mailinator.com\",\r\n    \"password\": \"aaa123BBB\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/users/auth",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"users",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in (user 2)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"auth_type\": \"USER_PASSWORD_AUTH\",\r\n    \"username\": \"toptal_quiz_builder_02@mailinator.com\",\r\n    \"password\": \"ccc456DDD\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/users/auth",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"users",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in (user 3)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"auth_type\": \"USER_PASSWORD_AUTH\",\r\n    \"username\": \"toptal_quiz_builder_03@mailinator.com\",\r\n    \"password\": \"eee789FFF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/users/auth",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"users",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
