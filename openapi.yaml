@@ -1,12 +1,9 @@
 openapi: "3.0.1"
 info:
   title: "Quiz Builder API"
-  version: "2022-07-06T19:13:45Z"
+  version: "v1.0"
 servers:
-- url: "https://03lqapmb89.execute-api.ap-southeast-1.amazonaws.com/{basePath}"
-  variables:
-    basePath:
-      default: "/v1"
+- url: "http://18.139.172.1:8080"
 paths:
   /quizzes/{id}/publish:
     post:
