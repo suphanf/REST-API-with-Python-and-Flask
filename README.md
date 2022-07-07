@@ -33,6 +33,8 @@ The authentication module utilizes Amazon Cognito.
 
 ## Test
 Tests include every case mentioned in the user requirements and more. It is located in [test](https://git.toptal.com/screening/Suphan-Fayong/-/tree/main/test). It can be run using Pytest. Detail can be found on README in its folder.
+### Run the tests
+`pytest test/*.py`
 
 ## Deployment
 The Flask backend needs to be deployed on a (virtual) machine. A permission to access DynamoDB and Cognito is required.
@@ -42,3 +44,5 @@ The Flask backend needs to be deployed on a (virtual) machine. A permission to a
 `pip3 install -r requirements.txt`
 ### Run the service
 `python3 app.py`
+
+A development version has been deployed on an EC2 instance. Its endpoint can be found in `API_HOST` in [config.py](https://git.toptal.com/screening/Suphan-Fayong/-/blob/main/test/config.py).
