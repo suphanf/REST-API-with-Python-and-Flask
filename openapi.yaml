@@ -3,7 +3,7 @@ info:
   title: "Quiz Builder API"
   version: "v1.0"
 servers:
-- url: "http://18.139.172.1:8080"
+- url: "http://localhost:8080"
 paths:
   /quizzes/{id}/publish:
     post:
